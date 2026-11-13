@@ -5,6 +5,8 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+## v1.0.1 — 2026-11-13
+
 ### Fixed
 
 - **`sync` records the full commit SHA in the manifest.** `harness-check`
