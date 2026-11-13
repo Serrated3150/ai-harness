@@ -5,6 +5,17 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+## v1.0.2 — 2026-11-13
+
+### Fixed
+
+- **`harness-review` no longer fails on the install PR.** On a project's first
+  install the base branch has no harness, so the review prompt cannot be built
+  from it. The bot now skips that one PR with a notice, instead of failing,
+  and never falls back to the PR's own prompt, which would let the PR write
+  its own review. A person reviews the install PR, and `harness-check` still
+  verifies its files against ai-harness.
+
 ## v1.0.1 — 2026-11-13
 
 ### Fixed
