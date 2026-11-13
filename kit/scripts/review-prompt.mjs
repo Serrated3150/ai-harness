@@ -25,8 +25,11 @@ const show = (ref, path) => {
 /** Fill the template. Pure, for tests. */
 export function buildPrompt(template, vars) {
   const body = template.includes("\n---\n") ? template.slice(template.indexOf("\n---\n") + 5) : template;
-  let out = body;
-  for (const [k, v] of Object.entries(vars)) out = out.split(`{{${k}}}`).join(v);
+  // The project checklist goes in first, so it may use the same placeholders
+  // (e.g. a marker that must carry {{HEAD_SHA}}).
+  const { PROJECT_CHECKLIST, ...rest } = vars;
+  let out = PROJECT_CHECKLIST === undefined ? body : body.split("{{PROJECT_CHECKLIST}}").join(PROJECT_CHECKLIST);
+  for (const [k, v] of Object.entries(rest)) out = out.split(`{{${k}}}`).join(v);
   const left = out.match(/\{\{[A-Z_]+\}\}/);
   if (left) throw new Error(`unfilled placeholder ${left[0]}`);
   return out.trim() + "\n";
