@@ -15,6 +15,8 @@ test("sync writes harness-owned files with a manifest that verifies", () => {
   assert.ok(Object.keys(r.files).length > 5);
   const m = JSON.parse(readFileSync(join(t, MANIFEST), "utf8"));
   assert.match(m.version, /^v\d+\.\d+\.\d+$/);
+  // harness-check fetches ai-harness by this exact commit, so it must be the full SHA.
+  if (m.commit !== null) assert.match(m.commit, /^[0-9a-f]{40}$/);
   assert.deepEqual(check(t, m), { missing: [], changed: [] });
   assert.ok(Object.keys(m.files).every((p) => /^(\.harness\/kit\/|\.claude\/skills\/harness-|\.claude\/agents\/harness-|\.github\/workflows\/harness-)/.test(p)), "every owned file is under a harness-owned path");
   assert.ok(!Object.keys(m.files).some((p) => p.endsWith(".test.mjs")), "tests are not vendored");

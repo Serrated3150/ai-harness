@@ -56,7 +56,7 @@ export function kitVersion(kitRoot = KIT_ROOT) {
   const v = readFileSync(join(kitRoot, "kit/VERSION"), "utf8").trim();
   let sha = null;
   try {
-    sha = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: kitRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    sha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: kitRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   } catch {}
   return { version: `v${v}`, commit: sha };
 }

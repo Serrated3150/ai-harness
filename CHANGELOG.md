@@ -5,6 +5,12 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+### Fixed
+
+- **`sync` records the full commit SHA in the manifest.** `harness-check`
+  fetches ai-harness by that exact commit to verify a sync PR, and a short SHA
+  cannot be fetched.
+
 ## v1.0.0 — 2026-11-13
 
 ### Added
