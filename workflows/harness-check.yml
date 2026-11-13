@@ -1,0 +1,80 @@
+# Harness-owned (ai-harness). Do not edit in a project.
+#
+# Fails a PR that changes harness-owned files outside `harness sync`, or whose
+# .harness/config.json is invalid, and dry-runs the state snapshot read-only.
+#
+# - Drift: the base branch's verify.mjs checks every file in
+#   .harness/kit/manifest.json against its recorded sha256.
+# - A sync PR (one that changes the manifest) is also checked against
+#   ai-harness itself: the kit is cloned at the manifest's commit and every
+#   listed file must be what that commit ships, so editing a harness file and
+#   its hash together is caught. If ai-harness is private, give the workflow a
+#   read token in the secret HARNESS_KIT_TOKEN.
+
+name: Harness check
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harness-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: harness check
+    runs-on: ${{ fromJSON(vars.HARNESS_RUNNER || '"ubuntu-latest"') }}
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+      checks: read
+      statuses: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Use the base branch's harness scripts
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/harness"
+          if git cat-file -e "origin/${BASE_REF}:.harness/kit/scripts/verify.mjs" 2>/dev/null; then
+            git archive "origin/${BASE_REF}" .harness/kit/scripts | tar -x -C "$RUNNER_TEMP/harness"
+          else
+            echo "::notice title=harness::First install: the base branch has no harness yet; using this PR's scripts, checked against ai-harness below."
+            mkdir -p "$RUNNER_TEMP/harness/.harness/kit" && cp -r .harness/kit/scripts "$RUNNER_TEMP/harness/.harness/kit/"
+          fi
+      - name: Config is valid
+        run: |
+          node -e 'import(process.argv[1]).then(m => { m.loadConfig(process.cwd(), { strict: true }); console.log("config ok") })' "$RUNNER_TEMP/harness/.harness/kit/scripts/lib/config.mjs"
+      - name: Harness-owned files are unchanged
+        run: node "$RUNNER_TEMP/harness/.harness/kit/scripts/verify.mjs"
+      - name: A changed manifest is what ai-harness ships
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          KIT_TOKEN: ${{ secrets.HARNESS_KIT_TOKEN }}
+        run: |
+          if git diff --quiet "origin/${BASE_REF}...HEAD" -- .harness/kit/manifest.json; then
+            echo "manifest unchanged"; exit 0
+          fi
+          commit=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(".harness/kit/manifest.json","utf8")).commit||"")')
+          if [ -z "$commit" ]; then echo "::error title=harness::the manifest records no ai-harness commit"; exit 1; fi
+          url="https://github.com/Serrated3150/ai-harness.git"
+          [ -n "$KIT_TOKEN" ] && url="https://x-access-token:${KIT_TOKEN}@github.com/Serrated3150/ai-harness.git"
+          git init -q "$RUNNER_TEMP/kit" && git -C "$RUNNER_TEMP/kit" fetch -q --depth 1 "$url" "$commit" && git -C "$RUNNER_TEMP/kit" checkout -q FETCH_HEAD
+          node "$RUNNER_TEMP/harness/.harness/kit/scripts/verify.mjs" --kit "$RUNNER_TEMP/kit"
+      - name: Routine state dry run (read-only)
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          node "$RUNNER_TEMP/harness/.harness/kit/scripts/state.mjs" --repo "$GITHUB_REPOSITORY" --out "$RUNNER_TEMP/state"
+          cat "$RUNNER_TEMP/state/state.md" >> "$GITHUB_STEP_SUMMARY"

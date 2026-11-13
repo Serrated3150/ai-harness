@@ -1,0 +1,4 @@
+// Harness-owned. Lint settings for the vendored harness files only (markdownlint-cli2
+// applies a directory's config to everything below it), so a project's own
+// markdownlint rules never fail on files it may not edit.
+{ "MD013": false, "MD033": false, "MD041": false, "MD060": false }
