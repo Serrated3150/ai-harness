@@ -1,0 +1,23 @@
+name: Bug
+description: A harness script, hook, workflow or base routine does something wrong.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: { label: Harness version, description: "From .harness/kit/manifest.json (version and commit)", placeholder: "v1.0.0 (abc1234)" }
+    validations: { required: true }
+  - type: input
+    id: where
+    attributes: { label: File and line, placeholder: ".harness/kit/scripts/state.mjs:120" }
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes: { label: What happened, and what you expected }
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes: { label: Minimal reproduction, description: "Config snippet, input, command and output. No secrets or private project data." }
+    validations: { required: true }
+  - type: textarea
+    id: workaround
+    attributes: { label: Workaround in project-owned files, if any }

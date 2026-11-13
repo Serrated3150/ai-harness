@@ -1,0 +1,6 @@
+{
+  // Long lines are allowed: generated templates and tables would otherwise wrap mid-link.
+  // CLAUDE.md is an @-import; kit/review/prompt.md starts with a maintainer comment and a --- separator.
+  "config": { "MD013": false, "MD033": false, "MD060": false },
+  "ignores": ["node_modules/**", "CLAUDE.md", "kit/review/prompt.md"]
+}

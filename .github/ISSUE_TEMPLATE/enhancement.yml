@@ -1,0 +1,15 @@
+name: Enhancement
+description: A harness rule that does not generalise, or something new the harness should do.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: story
+    attributes: { label: User story, description: "As a <persona>, I want <capability>, so that <benefit>." }
+    validations: { required: true }
+  - type: textarea
+    id: why-not-project
+    attributes: { label: Why this belongs in the harness, description: "Why every project would want it, rather than one project's overlay." }
+    validations: { required: true }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Acceptance criteria }

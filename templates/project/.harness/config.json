@@ -1,0 +1,41 @@
+{
+  "$comment": "Project-owned ai-harness configuration. Every key is documented in docs/CONFIG.md of ai-harness. This file is yours: the harness never rewrites it.",
+  "project": {
+    "name": "My Project",
+    "repo": "owner/repo",
+    "defaultBranch": "main"
+  },
+  "markerPrefix": "harness",
+  "protect": {
+    "$comment": "Paths the harness hook guards for this project. Add your own; an empty list protects nothing.",
+    "immutableOnMain": [],
+    "botBranchOnly": [],
+    "appendViaFragments": [],
+    "noPushTo": ["main"]
+  },
+  "lint": [
+    { "glob": "**/*.md", "builtin": "relative-links" }
+  ],
+  "gates": {
+    "$comment": "One entry per area: the paths that mark the area as changed, and the steps to run. Example below; replace with your own.",
+    "docs": {
+      "paths": ["**/*.md"],
+      "steps": [
+        { "name": "markdownlint", "run": "npx --yes markdownlint-cli2 \"**/*.md\"", "requires": "npx" }
+      ]
+    }
+  },
+  "changelog": {
+    "fragmentsDir": null,
+    "exemptBranches": ["^dependabot/"]
+  },
+  "review": {
+    "checklist": ".harness/review-checklist.md",
+    "lessonsOnlyPaths": ["^\\.harness/lessons/[a-z0-9-]+\\.md$"],
+    "lessonsOnlyTurns": 25,
+    "defaultTurns": 60
+  },
+  "contract": {
+    "profiles": {}
+  }
+}

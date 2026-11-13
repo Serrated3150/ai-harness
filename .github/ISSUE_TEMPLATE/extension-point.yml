@@ -1,0 +1,19 @@
+name: Extension point
+description: Your project needs to customise something that no project-owned file can express.
+labels: [enhancement, extension-point]
+body:
+  - type: input
+    id: version
+    attributes: { label: Harness version }
+    validations: { required: true }
+  - type: textarea
+    id: need
+    attributes: { label: What your project needs to vary, and why }
+    validations: { required: true }
+  - type: textarea
+    id: tried
+    attributes: { label: What you tried, description: "Which project-owned files (config, PROJECT.md, routine overlay, own skill/hook) and why they could not express it." }
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes: { label: Proposed extension point, description: "A config key, overlay behaviour or template, with a safe default." }

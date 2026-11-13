@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Unit tests
+        run: node --test $(find kit tools -name '*.test.mjs' | sort)
+      - name: Generated base routines are current
+        run: python3 tools/gen-routines.py --check
+      - name: Every contract profile resolves
+        run: |
+          cd "$RUNNER_TEMP"
+          for p in core issue-intake plan-review pr-follow-through pr-review issue-tracker test-coverage daily-full-suite weekly-test-strategy weekly-security-audit; do
+            node "$GITHUB_WORKSPACE/kit/scripts/sections.mjs" --file "$GITHUB_WORKSPACE/kit/contract/ROUTINES.md" --profile "$p" > /dev/null
+          done
+      - name: Generic only (no project names in vendored files)
+        run: |
+          if grep -rniE --exclude='*.test.mjs' 'dial ?book|tdb-|supabase|thedialbook' kit claude workflows templates; then
+            echo "::error::project-specific text in vendored files; use an extension point"; exit 1
+          fi
