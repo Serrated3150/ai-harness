@@ -55,10 +55,20 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          # First install: the base branch has no harness yet, so there is no
+          # trusted prompt to review under. Never fall back to the PR's own
+          # copy (the PR would write its own review): skip, and leave the
+          # install PR to a human reviewer. harness-check verifies its files.
+          if ! git cat-file -e "origin/${BASE_REF}:.harness/kit/scripts/review-prompt.mjs" 2>/dev/null; then
+            echo "::notice title=harness::First install: the base branch has no harness review prompt yet, so the review bot skips this PR. A person reviews the install PR; the bot reviews every PR after it merges."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           mkdir -p "$RUNNER_TEMP/harness"
           git archive "origin/${BASE_REF}" .harness/kit/scripts | tar -x -C "$RUNNER_TEMP/harness"
           node "$RUNNER_TEMP/harness/.harness/kit/scripts/review-prompt.mjs"
-      - uses: anthropics/claude-code-action@c0949c50a78c1ec8ce2647db36629b870e715d0c # v1.0.268
+      - if: steps.prompt.outputs.skip != 'true'
+        uses: anthropics/claude-code-action@c0949c50a78c1ec8ce2647db36629b870e715d0c # v1.0.268
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # The workflow token caps the reviewer at the permissions above.

@@ -48,6 +48,11 @@ HARNESS_SYNC=1 git add -A && HARNESS_SYNC=1 git commit -m "chore(harness): insta
 `HARNESS_SYNC=1` in the commit command is what lets the harness hook accept
 commits to harness-owned files. Use it only for sync commits.
 
+On this first install PR, `harness-check` uses the PR's own scripts (and
+checks them against ai-harness), and the review bot skips with a notice.
+The bot reviews only under the base branch's prompt, and the base branch
+has none yet. Review the install PR yourself.
+
 ## 5. Create the routines
 
 For each routine in your roster, create one scheduled task whose prompt is
