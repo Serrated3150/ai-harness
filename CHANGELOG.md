@@ -12,6 +12,9 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 - **`sync` records the full commit SHA in the manifest.** `harness-check`
   fetches ai-harness by that exact commit to verify a sync PR, and a short SHA
   cannot be fetched.
+- **The review checklist may use the prompt's placeholders.** It is inserted
+  before `{{REPO}}`, `{{PR_NUMBER}}`, `{{BASE_REF}}` and `{{HEAD_SHA}}` are filled,
+  so a project can ask the bot to emit a marker carrying the head SHA.
 
 ## v1.0.0 — 2026-11-13
 

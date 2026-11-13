@@ -28,3 +28,8 @@ test("turn budget tiers", () => {
   assert.equal(turnsFor([], review), 60);
   assert.equal(turnsFor(["a.md"], DEFAULTS.review), 60);
 });
+
+test("the project checklist may use the same placeholders", () => {
+  const p = buildPrompt(template, { ...vars, PROJECT_CHECKLIST: "emit `<!-- visual-approval: minor sha={{HEAD_SHA}} -->` for PR {{PR_NUMBER}}" });
+  assert.match(p, /visual-approval: minor sha=abc123 -->` for PR 5/);
+});

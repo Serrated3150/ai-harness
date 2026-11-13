@@ -72,7 +72,9 @@ still apply.
 
 Appended to the harness review prompt, and read from the PR's base branch.
 Write per-area instructions: security rules, schema rules, design rules, test
-expectations. Tune the turn budget in `config.json` `review`.
+expectations. It may use the prompt's placeholders (`{{REPO}}`,
+`{{PR_NUMBER}}`, `{{BASE_REF}}`, `{{HEAD_SHA}}`), for example to have the bot
+emit a project marker that carries the head SHA. Tune the turn budget in `config.json` `review`.
 
 ## 6. Skills, subagents, hooks, permissions
 
