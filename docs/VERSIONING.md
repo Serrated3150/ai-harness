@@ -23,6 +23,11 @@ Read the release notes between your version and the new one. A MAJOR release
 lists what to change in your project-owned files. `harness-check` verifies
 the sync PR against ai-harness at the recorded commit.
 
+Action pins in the harness workflows are kept current upstream by Dependabot
+(`.github/workflows/action-pins.yml`, copied into `workflows/` by
+`tools/pins.mjs`) and reach projects as PATCH releases. Keep Dependabot in
+your project off `harness-*` files (docs/ADOPTING.md §3).
+
 Project-owned files are never touched by an upgrade. When a release adds a
 template you want, copy it yourself or re-run with `--init`, which only
 writes files that don't exist yet.

@@ -82,6 +82,10 @@ Add your own under `.claude/` with any name that does **not** start with
 `harness-`:
 
 - `.claude/skills/new-migration/SKILL.md`
+- `.claude/skills/steward/SKILL.md`: your conventions for watching a PR (who
+  may ask for a rebase, how long CI may take, owner-only findings). Claude
+  Code reads this path before acting on a PR's events. Keep it to project
+  specifics and let it follow `harness-steward` for the procedure.
 - `.claude/agents/db-reviewer.md`
 - a project hook or permission in `.claude/settings.json`. `harness sync`
   keeps every entry it didn't write.

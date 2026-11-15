@@ -1,0 +1,16 @@
+# Keeps ai-harness's action pins current. Dependabot scans .github/workflows/
+# only: ci.yml, and action-pins.yml, which lists every action the vendored
+# workflows (workflows/harness-*.yml) use. A bump there fails CI until
+# `node tools/pins.mjs --write` copies it into workflows/; the change then
+# reaches projects in the next harness release (docs/VERSIONING.md).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci

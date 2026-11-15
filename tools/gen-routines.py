@@ -91,8 +91,9 @@ R = {
    §follow-through.
 3. **Every open routine PR**, oldest-first in the shared order, through the
    loop in §follow-through: CI, every finding at every severity, branch
-   maintenance, ready, merged hand-off. Leave other routines' learning PRs and
-   bot-owned branches alone.
+   maintenance, ready, merged hand-off. The `harness-steward` skill (or the
+   project's `steward` skill, which extends it) is the per-PR procedure.
+   Leave other routines' learning PRs and bot-owned branches alone.
 4. Before the ready hand-off, check the PR **waits on nothing still open**
    (§order), including sequencing its issue's approved plan settles.
 """),

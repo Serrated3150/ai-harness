@@ -50,6 +50,7 @@ Everything else, in particular:
 | `.harness/lessons/*.md` | What your routines learn (written by them, through PRs) |
 | `.harness/review-checklist.md` | What the review bot checks in this project |
 | `.claude/skills/*`, `.claude/agents/*` not named `harness-*` | Your own skills and agents |
+| `.claude/skills/steward/SKILL.md` | Your conventions for watching a PR. Claude Code reads it from a PR's head branch before acting on PR events, so it is the entry point; it follows `harness-steward` |
 | Hooks and permissions in `.claude/settings.json` other than the harness entries | Your own hooks and allowlist |
 | Your scheduled tasks | Created from the loader, owned by you |
 

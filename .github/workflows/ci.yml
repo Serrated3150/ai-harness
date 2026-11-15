@@ -20,6 +20,8 @@ jobs:
           node-version: 24
       - name: Unit tests
         run: node --test $(find kit tools -name '*.test.mjs' | sort)
+      - name: Vendored workflows use the pinned actions
+        run: node tools/pins.mjs --check
       - name: Generated base routines are current
         run: python3 tools/gen-routines.py --check
       - name: Every contract profile resolves

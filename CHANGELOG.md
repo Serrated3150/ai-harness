@@ -5,6 +5,32 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+## v1.1.0 — 2026-11-15
+
+### Added
+
+- **`harness-steward` skill**: the procedure for any agent or routine
+  watching a PR it owns. It covers subscribing or scheduling check-ins,
+  working every open item on each wake (conflict, red CI, harness-owned
+  files, findings at every severity, branch-maintenance requests), handing
+  off, and when to stop. The `pr-follow-through` base routine points to it.
+- **Project-owned `steward` skill template**
+  (`templates/project/.claude/skills/steward/SKILL.md`, seeded by `--init`).
+  Claude Code reads `.claude/skills/steward/SKILL.md` from a PR's head branch
+  before acting on PR events, so the project keeps its conventions there and
+  follows `harness-steward` for the rest.
+- **Dependabot for ai-harness** (`.github/dependabot.yml`), with
+  `.github/workflows/action-pins.yml` as the pin source for the vendored
+  workflows. `tools/pins.mjs --check` fails CI when `workflows/` drifts from
+  it, and `--write` copies the pins across.
+
+### Changed
+
+- `harness-review` uses `anthropics/claude-code-action` v1.0.276 (was
+  v1.0.268).
+- `docs/ADOPTING.md`: keep a project's Dependabot off `harness-*` workflows
+  with `exclude-paths`. Their pins arrive with harness releases.
+
 ## v1.0.2 — 2026-11-13
 
 ### Fixed
