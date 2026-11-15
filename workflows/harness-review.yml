@@ -68,7 +68,7 @@ jobs:
           git archive "origin/${BASE_REF}" .harness/kit/scripts | tar -x -C "$RUNNER_TEMP/harness"
           node "$RUNNER_TEMP/harness/.harness/kit/scripts/review-prompt.mjs"
       - if: steps.prompt.outputs.skip != 'true'
-        uses: anthropics/claude-code-action@c0949c50a78c1ec8ce2647db36629b870e715d0c # v1.0.268
+        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # The workflow token caps the reviewer at the permissions above.

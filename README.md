@@ -53,7 +53,7 @@ The full delineation is in [docs/BOUNDARIES.md](docs/BOUNDARIES.md).
 | **Nine base routines** (`kit/routines/`) | Issue intake, plan review, PR follow-through, PR review, test coverage, issue tracker, daily suite, weekly test strategy and weekly security audit. Each starts by loading the contract by section, your overlay, its lessons and the state snapshot. |
 | **Hook engine** (`kit/hooks/`) | Refuses edits to harness-owned files and to paths your config protects. Stops commits that gut a file and pushes to the default branch, lints what was just edited, and reminds about changelog fragments. Fails open. |
 | **Scripts** (`kit/scripts/`) | `sections.mjs` loads a doc by section, `lessons.mjs` builds a lessons digest, `state.mjs` writes the issue/PR state snapshot, `gates.mjs` runs local gates and prints only failures, `verify.mjs` checks vendored files, `review-prompt.mjs` builds the review bot's prompt. |
-| **Skills and agents** (`claude/`) | `harness-gates`, `harness-pr`, `harness-review`, `harness-extend`, `harness-issue`, and the `harness-reviewer` subagent. |
+| **Skills and agents** (`claude/`) | `harness-gates`, `harness-pr`, `harness-review`, `harness-steward` (watch your PR until it is done), `harness-extend`, `harness-issue`, and the `harness-reviewer` subagent. `--init` also seeds a project-owned `steward` skill, the entry point Claude Code reads for PR events. |
 | **Workflows** (`workflows/`) | `harness-review` (review bot), `harness-state` (state snapshot every 20 min), `harness-check` (drift, config and snapshot dry run on every PR). |
 
 Why vendored and not a Claude Code plugin? Cloud and scheduled sessions,

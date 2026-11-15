@@ -1,0 +1,25 @@
+# Pin source for the vendored workflows (workflows/harness-*.yml).
+#
+# Dependabot only scans .github/workflows/, so the actions the vendored
+# workflows use are listed here, where it can see them. When Dependabot bumps a
+# pin in this file, CI (`node tools/pins.mjs --check`) fails until the same pin
+# is copied into workflows/ with `node tools/pins.mjs --write`. Projects then
+# get the bump through a harness release, never by editing their copy.
+#
+# The job never runs: it exists only to be read by Dependabot and tools/pins.mjs.
+
+name: Action pins
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  pins:
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276

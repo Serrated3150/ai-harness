@@ -37,6 +37,14 @@ repository is touched.
   for ai-harness, so `harness-check` can verify sync PRs.
 - Labels: create the ones in the contract (`§status-labels`,
   `§type-labels`).
+- Dependabot: keep it off harness-owned files. Their pins arrive with harness
+  releases, and a Dependabot PR that edits them fails `harness-check`. Add to
+  each `github-actions` entry in `.github/dependabot.yml`:
+
+  ```yaml
+      exclude-paths:
+        - ".github/workflows/harness-*.yml"
+  ```
 
 ## 4. Commit and open the PR
 
