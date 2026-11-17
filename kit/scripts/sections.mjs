@@ -30,7 +30,7 @@ export const DEFAULT_FILE = ".harness/kit/contract/ROUTINES.md";
 // what each base routine loads at the start of a run. A project adds profiles
 // for its own docs, or extends these, in .harness/config.json
 // (`contract.profiles`); a project profile with the same name replaces this one.
-export const CORE = ["§hard-limits", "§markers", "§status-labels", "§type-labels", "§order", "§snapshot", "§learning"];
+export const CORE = ["§hard-limits", "§markers", "§status-labels", "§type-labels", "§order", "§snapshot", "§parallel", "§ledger", "§learning"];
 export const PROFILES = {
   core: CORE,
   "issue-intake": [...CORE, "§claims", "§picking-work", "§triage", "§plan-gate", "§implementation", "§templates", "§run-summary"],

@@ -24,7 +24,10 @@ don't apply:
 
 - **Who may ask for branch maintenance**: for example, people with write
   access, and the PR reviewer routine through its marker.
-- **CI wait**: how long a run may take before you treat it as stuck.
+- **CI and review-bot waits**: set the limits and the hand-off gate in
+  `.harness/config.json` (`routines.waits`, `review.handoff`,
+  `review.fixNits`), not here. Name anything stricter, such as a CI lane
+  that is known to be slow.
 - **Rebase or merge**: whether this project rebases routine branches or
   merges the default branch in.
 - **Owner-only gates**: findings or files that always wait for the owner.

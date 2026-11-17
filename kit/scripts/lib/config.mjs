@@ -28,6 +28,19 @@ export const DEFAULTS = {
     overlays: ".harness/routines",
     lessons: ".harness/lessons",
     readme: ".harness/routines/README.md",
+    // Run discipline (contract §ledger, §parallel, §implementation). The
+    // defaults keep one item per run, no ledger and the CI-only hand-off.
+    // When true, every run keeps a run ledger (kit/scripts/ledger.mjs) and the
+    // stop hook refuses to end a run while an item in its scope has no outcome.
+    ledger: false,
+    // Minutes from the run's start: start nothing new after newWorkMinutes;
+    // be finished by endMinutes. Measured by the ledger's clock.
+    budget: { newWorkMinutes: 45, endMinutes: 60 },
+    // Subagents at once, and work items intake takes per run.
+    parallel: { maxAgents: 1, maxItemsPerRun: 1 },
+    // Per PR per run: minutes of waiting (CI and review bot together), minutes
+    // for one review-bot verdict, and fix cycles (CI and findings together).
+    waits: { prMinutes: 40, verdictMinutes: 25, fixCycles: 3 },
   },
   protect: {
     // Files that are immutable once they exist on the default branch.
@@ -51,6 +64,13 @@ export const DEFAULTS = {
     lessonsOnlyPaths: [],
     lessonsOnlyTurns: 25,
     defaultTurns: 60,
+    // When a PR may go to the owner: "ci" (CI green on the head) or
+    // "clean-approval" (CI green and the review bot approved that head with
+    // no Blocker, Warning or Nit).
+    handoff: "ci",
+    // When true, Nits are fixed and pushed like any finding instead of being
+    // answered and carried to the next push.
+    fixNits: false,
   },
 };
 
@@ -90,6 +110,21 @@ export function validate(raw) {
   }
   for (const b of raw.protect?.botBranchOnly ?? [])
     if (!Array.isArray(b.paths) || !Array.isArray(b.branches)) errors.push("protect.botBranchOnly entries need paths and branches arrays");
+  const r = raw.routines ?? {};
+  if (r.ledger !== undefined && typeof r.ledger !== "boolean") errors.push("routines.ledger must be true or false");
+  const posInt = (v) => Number.isInteger(v) && v > 0;
+  for (const [group, keys] of [
+    ["budget", ["newWorkMinutes", "endMinutes"]],
+    ["parallel", ["maxAgents", "maxItemsPerRun"]],
+    ["waits", ["prMinutes", "verdictMinutes", "fixCycles"]],
+  ])
+    for (const k of keys)
+      if (r[group]?.[k] !== undefined && !posInt(r[group][k])) errors.push(`routines.${group}.${k} must be a positive integer`);
+  if (r.budget?.newWorkMinutes && r.budget?.endMinutes && r.budget.newWorkMinutes > r.budget.endMinutes)
+    errors.push("routines.budget.newWorkMinutes must not exceed routines.budget.endMinutes");
+  if (raw.review?.handoff !== undefined && !["ci", "clean-approval"].includes(raw.review.handoff))
+    errors.push('review.handoff must be "ci" or "clean-approval"');
+  if (raw.review?.fixNits !== undefined && typeof raw.review.fixNits !== "boolean") errors.push("review.fixNits must be true or false");
   for (const a of raw.protect?.appendViaFragments ?? [])
     if (!a.file || !a.fragments) errors.push("protect.appendViaFragments entries need file and fragments");
   return errors;

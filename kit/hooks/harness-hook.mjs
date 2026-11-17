@@ -20,6 +20,9 @@
 //   post-edit  (PostToolUse: Edit|Write|MultiEdit)
 //     - runs the config's `lint` entries for the changed file; reports only errors.
 //   stop       (Stop)
+//     - routines.ledger: a routine run whose run ledger still has items with
+//       no outcome is sent back to work (at most three times per run; no
+//       ledger, as in an interactive session, means no check);
 //     - a branch with changes and no changelog fragment gets one reminder
 //       (only when changelog.fragmentsDir is set).
 //   session    (SessionStart)
@@ -34,6 +37,7 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadConfig } from "../scripts/lib/config.mjs";
 import { globToRegExp, matchesAny } from "../scripts/lib/glob.mjs";
+import { hookDecision as ledgerDecision, ledgerPath } from "../scripts/ledger.mjs";
 
 export const MANIFEST = ".harness/kit/manifest.json";
 export const KIT_ISSUES = "https://github.com/Serrated3150/ai-harness/issues";
@@ -255,9 +259,26 @@ function postEdit(input) {
   return 2;
 }
 
+/** The run-ledger check (contract §ledger), or null. Fails open. */
+export function ledgerStop(cfg, cwd, now = Date.now()) {
+  if (!cfg.routines?.ledger) return null;
+  try {
+    return ledgerDecision(ledgerPath(cwd), now);
+  } catch {
+    return null;
+  }
+}
+
 function stop(input) {
-  if (input.stop_hook_active) return 0;
   const ctx = context(input);
+  // The ledger has its own block limit, so it runs even on a hook-driven
+  // continuation (stop_hook_active); the fragment reminder below does not.
+  const ledger = ledgerStop(ctx.cfg, ctx.root);
+  if (ledger) {
+    process.stdout.write(JSON.stringify(ledger));
+    return 0;
+  }
+  if (input.stop_hook_active) return 0;
   const dir = ctx.cfg.changelog.fragmentsDir;
   const main = `origin/${ctx.cfg.project.defaultBranch}`;
   if (!dir || !ctx.branch || ctx.branch === "HEAD" || ctx.cfg.protect.noPushTo.includes(ctx.branch) || !hasRef(main, ctx.root)) return 0;
