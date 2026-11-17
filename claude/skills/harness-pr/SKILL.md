@@ -26,8 +26,12 @@ node .harness/kit/scripts/sections.mjs §implementation §status-labels §order
    - Link the approved plan, and list deviations from it.
    - Put "Not yet verified" items in a plain list, never as unchecked boxes.
 6. **Draft, then wait for CI**: mark it ready only when CI is green on the
-   head, then request review and set `pending-review`. Setting labels
-   replaces the whole set. Never touch the owner's labels.
+   head, then pass the hand-off gate (`review.handoff`, §implementation)
+   before requesting review and setting `pending-review`. With
+   `"clean-approval"`, that means the review bot approved the head with no
+   Blocker, Warning or Nit. Steward the PR from here with the
+   `harness-steward` skill. Never wait with a foreground `sleep`. Setting
+   labels replaces the whole set. Never touch the owner's labels.
 7. **Waits on nothing**: before handing it off, check that its issue doesn't
    depend on anything still open, and check the sequencing its approved plan
    settles (§order).

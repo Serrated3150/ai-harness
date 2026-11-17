@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { DEFAULTS, merge } from "../scripts/lib/config.mjs";
-import { addsEntryHeading, brokenLinks, commitAll, editVerdict, guttedFiles, isCommit, parseNumstat, pushesTo } from "./harness-hook.mjs";
+import { addsEntryHeading, brokenLinks, commitAll, editVerdict, guttedFiles, isCommit, ledgerStop, parseNumstat, pushesTo } from "./harness-hook.mjs";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const cfg = merge(structuredClone(DEFAULTS), {
   protect: {
@@ -88,5 +91,23 @@ test("the hook fails open on bad input and unknown events", () => {
     const r = spawnSync(process.execPath, [script, arg], { input: stdin, encoding: "utf8" });
     assert.equal(r.status, 0, `${arg}: ${r.stderr}`);
     assert.equal(r.stdout, "");
+  }
+});
+
+test("stop: the run-ledger check runs only when routines.ledger is on", () => {
+  const path = join(mkdtempSync(join(tmpdir(), "hook-ledger-")), "ledger.json");
+  const startedAt = new Date().toISOString();
+  writeFileSync(path, JSON.stringify({ routine: "pr-review", startedAt, listed: true, items: [{ ref: "#1", status: "todo", at: startedAt }], stopBlocks: 0 }));
+  const prev = process.env.HARNESS_RUN_LEDGER;
+  process.env.HARNESS_RUN_LEDGER = path;
+  try {
+    assert.equal(ledgerStop(cfg, process.cwd()), null, "off by default");
+    const on = merge(structuredClone(cfg), { routines: { ledger: true } });
+    const d = ledgerStop(on, process.cwd());
+    assert.equal(d.decision, "block");
+    assert.match(d.reason, /#1: still todo/);
+  } finally {
+    if (prev === undefined) delete process.env.HARNESS_RUN_LEDGER;
+    else process.env.HARNESS_RUN_LEDGER = prev;
   }
 });

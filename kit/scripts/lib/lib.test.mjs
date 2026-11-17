@@ -50,3 +50,18 @@ test("$-prefixed keys are comments at every level", async () => {
   const tpl = JSON.parse(readFileSync(new URL("../../../templates/project/.harness/config.json", import.meta.url), "utf8"));
   assert.deepEqual(validate(stripComments(tpl)), [], "the shipped config template is valid");
 });
+
+test("run-discipline defaults keep today's behaviour", () => {
+  assert.equal(DEFAULTS.routines.ledger, false);
+  assert.deepEqual(DEFAULTS.routines.parallel, { maxAgents: 1, maxItemsPerRun: 1 });
+  assert.equal(DEFAULTS.review.handoff, "ci");
+  assert.equal(DEFAULTS.review.fixNits, false);
+});
+
+test("run-discipline keys are validated", () => {
+  assert.deepEqual(validate({ routines: { ledger: true, budget: { newWorkMinutes: 70, endMinutes: 90 }, parallel: { maxAgents: 4, maxItemsPerRun: 8 } }, review: { handoff: "clean-approval", fixNits: true } }), []);
+  assert.ok(validate({ routines: { ledger: "yes" } }).some((e) => e.includes("routines.ledger")));
+  assert.ok(validate({ routines: { parallel: { maxAgents: 0 } } }).some((e) => e.includes("maxAgents")));
+  assert.ok(validate({ routines: { budget: { newWorkMinutes: 90, endMinutes: 60 } } }).some((e) => e.includes("must not exceed")));
+  assert.ok(validate({ review: { handoff: "always" } }).some((e) => e.includes("review.handoff")));
+});

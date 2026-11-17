@@ -5,6 +5,41 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+Every change below is opt-in: the defaults keep v1.1.0's behaviour, so this
+is a MINOR release (v1.2.0).
+
+### Added
+
+- **Run ledger** (`kit/scripts/ledger.mjs`, contract §ledger,
+  `routines.ledger`). A run lists its whole scope at the start and records an
+  outcome for every item. The harness stop hook sends the run back to work
+  while any item has none, at most three times per run, and fails open. The
+  ledger also keeps the run clock, so a "budget" stop is measured
+  (`routines.budget`) and refused before the cutoff. Seen in a project: runs
+  were summarising after two or three minutes, with most of their PRs "not
+  checked".
+- **Parallel subagents** (contract §parallel, `routines.parallel`). These cover
+  how many subagents run at once, a worktree for each one that writes, what
+  never runs in parallel, what a subagent gets and returns, and which state
+  stays with the main agent. §picking-work takes up to `maxItemsPerRun` items
+  per run.
+- **Hand-off gate** (`review.handoff`, `review.fixNits`, §implementation).
+  `"clean-approval"` hands a PR to the owner only once CI is green and the
+  review bot has approved the head with no Blocker, Warning or Nit. With
+  `fixNits`, Nits are fixed and pushed instead of carried.
+- **Wait limits** (`routines.waits`): per-PR minutes, minutes per bot
+  verdict, and fix cycles.
+- Base routines (start of every run) read the run-discipline settings, and
+  `harness-steward` and `harness-pr` follow the hand-off gate. The `core`
+  section profile includes §parallel and §ledger.
+- §roster recommends schedules where no two runs overlap.
+
+### Fixed
+
+- §implementation says how to wait for CI: never with a foreground `sleep`,
+  which sandboxed sessions refuse and return from at once. Work on another
+  item instead, or use the session's monitor tool or a background `sleep`.
+
 ## v1.1.0 — 2026-11-15
 
 ### Added

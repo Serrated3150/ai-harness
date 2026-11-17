@@ -33,9 +33,18 @@
     "checklist": ".harness/review-checklist.md",
     "lessonsOnlyPaths": ["^\\.harness/lessons/[a-z0-9-]+\\.md$"],
     "lessonsOnlyTurns": 25,
-    "defaultTurns": 60
+    "defaultTurns": 60,
+    "handoff": "ci",
+    "fixNits": false
   },
   "contract": {
     "profiles": {}
+  },
+  "routines": {
+    "$comment": "Run discipline (docs/CONFIG.md). These are the defaults: one item per run, no run ledger. Turn on the ledger, raise the budget and add parallel subagents together, and space the routines' schedules so that no two runs overlap.",
+    "ledger": false,
+    "budget": { "newWorkMinutes": 45, "endMinutes": 60 },
+    "parallel": { "maxAgents": 1, "maxItemsPerRun": 1 },
+    "waits": { "prMinutes": 40, "verdictMinutes": 25, "fixCycles": 3 }
   }
 }

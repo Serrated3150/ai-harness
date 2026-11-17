@@ -33,6 +33,27 @@ run, how the review bot is tuned. The full reference is
 }
 ```
 
+**Run discipline** is configuration too. A project whose runs stop part-way,
+or that wants routines to work several items in parallel and hand PRs over
+only after a clean review-bot approval, turns it on here rather than in an
+overlay:
+
+```json
+{
+  "routines": {
+    "ledger": true,
+    "budget": { "newWorkMinutes": 70, "endMinutes": 90 },
+    "parallel": { "maxAgents": 4, "maxItemsPerRun": 8 },
+    "waits": { "prMinutes": 60, "verdictMinutes": 25, "fixCycles": 3 }
+  },
+  "review": { "handoff": "clean-approval", "fixNits": true }
+}
+```
+
+A longer budget needs a longer slot: re-space the routines' schedules so no
+two runs overlap (contract §roster). The run ledger needs the harness stop
+hook, which `harness sync` wires in `.claude/settings.json`.
+
 ## 2. Project rules: `.harness/PROJECT.md`
 
 Anything every routine must know about this project: areas, hard contracts,
