@@ -5,8 +5,10 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+## v1.2.0 — 2026-11-17
+
 Every change below is opt-in: the defaults keep v1.1.0's behaviour, so this
-is a MINOR release (v1.2.0).
+is a MINOR release.
 
 ### Added
 
