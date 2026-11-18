@@ -1,0 +1,45 @@
+# Tags each ai-harness release (maintainer-only; not vendored to projects).
+#
+# When a push to main changes kit/VERSION, tag the release commit (the
+# first-parent commit that changed it, normally the merge of the bump PR)
+# `v<kit/VERSION>`. Run it by hand (workflow_dispatch) to tag a release that
+# merged before this workflow existed. The logic, including "a tag never
+# moves", is tools/release-tag.mjs.
+#
+# Only this job can write: contents: write, used for one tag push. A tag pushed
+# with GITHUB_TOKEN starts no other workflow.
+
+name: Release tag
+
+on:
+  push:
+    branches: [main]
+    paths: [kit/VERSION]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release-tag
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    name: tag release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Release-tag tests
+        run: node --test tools/release-tag.test.mjs
+      - name: Tag the release commit
+        run: node tools/release-tag.mjs --apply
