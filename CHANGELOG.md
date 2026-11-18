@@ -5,6 +5,15 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+## v1.2.2 — 2026-11-18
+
+### Fixed
+
+- `kit/review/prompt.md` (v1.2.1) started a list without a blank line before
+  it (MD032). A project that lints the vendored kit, as `**/*.md` does, failed
+  its docs lint after syncing v1.2.1. ai-harness's own markdownlint config
+  ignores that file and CI runs no markdownlint, so it was not caught here.
+
 ## v1.2.1 — 2026-11-18
 
 ### Fixed
