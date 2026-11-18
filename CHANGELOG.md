@@ -5,6 +5,16 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+### Added
+
+- **Release tagging is automatic** (maintainer tooling; projects receive
+  nothing new). When a push to `main` changes `kit/VERSION`, the *Release tag*
+  workflow tags the release commit `v<version>`: the first-parent commit that
+  changed it, normally the bump PR's merge. A tag never moves: the workflow
+  fails rather than re-point an existing tag. `workflow_dispatch` tags a
+  release that merged before this workflow existed. The logic and its tests
+  are in `tools/release-tag.mjs` (docs/VERSIONING.md).
+
 ## v1.2.2 — 2026-11-18
 
 ### Fixed

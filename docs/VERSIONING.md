@@ -2,6 +2,13 @@
 
 - ai-harness is released as **semver tags** (`v1.0.0`). `kit/VERSION` holds
   the version. Each release has a `CHANGELOG.md` entry.
+- **Releasing** is one PR that bumps `kit/VERSION` and moves the Unreleased
+  notes under `## vX.Y.Z — <date>`. When it merges, the *Release tag* workflow
+  (`.github/workflows/release-tag.yml`, using `tools/release-tag.mjs`) tags
+  the merge commit `vX.Y.Z`. Nobody tags by hand. A tag never moves: if
+  `vX.Y.Z` already exists on another commit, the workflow fails, and the fix is
+  a new version. Run the workflow by hand to tag a release that merged
+  without it.
 - **MAJOR** releases are breaking for projects: a renamed config key, a
   removed extension point, a contract rule that a project's overlay may now
   violate, or a moved harness-owned path. **MINOR** releases add, and
