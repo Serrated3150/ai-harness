@@ -33,3 +33,12 @@ test("the project checklist may use the same placeholders", () => {
   const p = buildPrompt(template, { ...vars, PROJECT_CHECKLIST: "emit `<!-- visual-approval: minor sha={{HEAD_SHA}} -->` for PR {{PR_NUMBER}}" });
   assert.match(p, /visual-approval: minor sha=abc123 -->` for PR 5/);
 });
+
+test("the prompt warns that restored config paths are the base branch's copy", () => {
+  const p = buildPrompt(template, vars);
+  assert.match(p, /restores Claude configuration from the base\nbranch/);
+  assert.match(p, /`\.claude\/\*\*`/);
+  assert.match(p, /git show HEAD:<path>/);
+  assert.match(p, /working tree shows `main`'s version/);
+  assert.match(p, /Report only what you ran/);
+});

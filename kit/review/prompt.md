@@ -19,6 +19,22 @@ Read the changed files yourself. Do NOT rely on the PR description or the
 commit messages; where the description and the code disagree, say so. Never
 claim a file does not exist without checking for it.
 
+**Some working-tree files are the base branch's copy, not the PR's.** Before
+you start, the review action restores Claude configuration from the base
+branch for security: `.claude/**`, `.mcp.json`, `.claude.json`,
+`.gitmodules`, `.ripgreprc` and every `CLAUDE.md`. For those paths the
+working tree shows `{{BASE_REF}}`'s version.
+- Read the PR's version with `git show HEAD:<path>`, never `Read` or `cat`.
+- Judge the change with `git diff origin/{{BASE_REF}}...HEAD -- <path>`.
+- Never compare a working-tree copy of those paths with anything the PR
+  changes, such as `.harness/kit/manifest.json`. On a harness sync PR they
+  will always look stale.
+
+**Report only what you ran.** Never quote output, hashes or results from a
+command you did not run, and say so when your tools could not check something.
+Whether a sync's harness-owned files match ai-harness is the `harness check`
+CI job's to decide. Cite its result rather than re-deriving it.
+
 ## Standards
 
 Read the docs that govern the changed areas before asserting a violation:
@@ -47,8 +63,9 @@ Harness-owned files (`.harness/kit/**`, `.claude/skills/harness-*`,
 
 ## CI
 
-Check the lanes with `gh pr checks`. Note what CI cannot exercise, and that
-all lanes passing does not mean the change is correct.
+Check the lanes with `gh pr checks`. If it fails, say so and judge without
+CI; never guess a lane's result. Note what CI cannot exercise, and that all
+lanes passing does not mean the change is correct.
 
 ## Output
 

@@ -27,6 +27,10 @@ permissions:
   id-token: write
   actions: read
   checks: read
+  # `gh pr checks` reads check runs and commit statuses in one query; without
+  # statuses it fails with "Resource not accessible by integration" and the
+  # reviewer cannot see CI. Read-only, like everything above but the comment.
+  statuses: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
