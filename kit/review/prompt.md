@@ -24,6 +24,7 @@ you start, the review action restores Claude configuration from the base
 branch for security: `.claude/**`, `.mcp.json`, `.claude.json`,
 `.gitmodules`, `.ripgreprc` and every `CLAUDE.md`. For those paths the
 working tree shows `{{BASE_REF}}`'s version.
+
 - Read the PR's version with `git show HEAD:<path>`, never `Read` or `cat`.
 - Judge the change with `git diff origin/{{BASE_REF}}...HEAD -- <path>`.
 - Never compare a working-tree copy of those paths with anything the PR
