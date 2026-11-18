@@ -5,6 +5,29 @@ All notable changes to ai-harness. Projects pin a version and upgrade with
 
 ## Unreleased
 
+## v1.2.1 — 2026-11-18
+
+### Fixed
+
+- **The review bot misjudged harness sync PRs.** Since v1.0.74
+  (CVE-2026-47751), `claude-code-action` restores `.claude/**`, `.mcp.json`,
+  `.claude.json`, `.gitmodules`, `.ripgreprc` and every `CLAUDE.md` from the
+  base branch before the bot runs. On a sync PR, the bot saw the base
+  branch's `.claude/skills/harness-*` files next to the PR's new manifest and
+  reported a Blocker: harness-owned files that "differ from the manifest".
+  `harness check` and `verify.mjs` both passed on that head. The review prompt
+  (`kit/review/prompt.md`) now names those paths and tells the bot to read
+  their PR versions with `git show HEAD:<path>`. It also tells the bot to
+  never compare them with anything the PR changes, to report only what it
+  ran, and to leave harness-file integrity to `harness check`. The restore
+  stays: it is a security control.
+- **The review bot could not read CI.** `gh pr checks` reads check runs and
+  commit statuses in one query, and `harness-review.yml` granted
+  `checks: read` but not `statuses: read`. In a project that posts commit
+  statuses, every review reported "Resource not accessible by integration".
+  The workflow now grants `statuses: read`. That is read-only, so the bot
+  still can only comment and read.
+
 ## v1.2.0 — 2026-11-17
 
 Every change below is opt-in: the defaults keep v1.1.0's behaviour, so this
